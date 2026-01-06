@@ -1,0 +1,48 @@
+import requests
+import tkinter as tk
+
+API_KEY = "YOUR_API_KEY"
+city = "YOUR_CITY"
+url = f"http://api.weatherapi.com/v1/current.json?key={API_KEY}&q={city}&aqi=no&pollen=yes"
+response = requests.get(url)
+
+root = tk.Tk()
+root.title("Weather App")
+root.geometry("350x400")
+root.configure(bg="#1e1e1e")
+
+def label(text, size=12):
+        return tk.Label(
+                root,
+                text=text,
+                fg="white",
+                bg="#1e1e1e",
+                font=("Arial", size)
+        )
+
+if response.status_code == 200:
+        data = response.json()
+
+        location = data["location"]["name"]
+        temp_f = data["current"]["temp_f"]
+        feelslike = data["current"]["feelslike_f"]
+        humidity = data["current"]["humidity"]
+        wind1 = data["current"]["wind_mph"]
+        wind2 = data["current"]["wind_dir"]
+        precip = data["current"]["precip_in"]
+        uv = data["current"]["uv"]
+        updated = data["current"]["last_updated"]
+
+        label(f"Weather in {location}", 16).pack(pady=10)
+        label(f"Temp: {temp_f}°F").pack()
+        label(f"Feels like: {feelslike}°F").pack()
+        label(f"Humidity: {humidity}%").pack()
+        label(f"Wind: {wind1} {wind2}").pack()
+        label(f"Precip: {precip} in").pack()
+        label(f"UV Index: {uv}").pack()
+
+        label("\nLast Updated:", 10).pack(pady=(15, 0))
+        label(updated, 10).pack()
+
+else:
+        label("Failed to retrieve data", 14).pack(pady=20)
